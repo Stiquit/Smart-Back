@@ -47,7 +47,7 @@ server.listen(webSocketPort, () => {
 });
 server.on("error", onError);
 server.on("listening", onListening);
-/**Aqui adento se publica al mqtt y se reciben los mensajes para la com full duplex */
+/*Aca al mqtt y se reciben los mensajes para la com full duplex */
 var authenticate = require("../autenthicate");
 
 wsServer.on("request", (request) => {
@@ -62,15 +62,15 @@ wsServer.on("request", (request) => {
         mqttClient.publish(data.topic, String(data.payload));
         const date = new Date();
         /**Revisar funcionamiento creacion acciones por ws */
-        Action.create({
-          user: data.user,
-          device: data.device,
-          payload: data.payload,
-          day: date.getDay(),
-          hour: `${date.getHours()}:${date.getMinutes()}`,
-        }).then((action) => {
-          console.log(`Created new action: ${action}`);
-        });
+        // Action.create({
+        //   user: data.user,
+        //   device: data.device,
+        //   payload: data.payload,
+        //   day: date.getDay(),
+        //   hour: `${date.getHours()}:${date.getMinutes()}`,
+        // }).then((action) => {
+        //   console.log(`Created new action: ${action}`);
+        // });
         connection.sendUTF(
           JSON.stringify({
             Reply: "hold",

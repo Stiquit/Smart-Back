@@ -1,4 +1,4 @@
-var express = require("express");
+  var express = require("express");
 var deviceRouter = express.Router();
 var Device = require("../models/device");
 var User = require("../models/user");
