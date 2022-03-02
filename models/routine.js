@@ -4,10 +4,15 @@ const Routine = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  name: String,
   actions: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Action",
+      topic: String,
+      payload: String,
+      device: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Device",
+      },
     },
   ],
 });

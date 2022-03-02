@@ -29,17 +29,23 @@ router.post("/signup", (req, res, next) => {
           passport.authenticate("local")(req, res, () => {
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
-            res.json({ succes: true, user: user.username });
+            res.json({ success: true, user: user.username });
           });
         }
       )
-    : res.status(400).send({ succes: false });
+    : res.status(400).send({ success: false });
 });
-router.post("/login", passport.authenticate("local"), (req, res, next) => {
+router.post("/signin", passport.authenticate("local"), (req, res, next) => {
   var token = authenticate.getToken({ _id: req.user._id });
-  res.status(200);
-  res.setHeader("Content-Type", "application/json");
-  res.json({ succes: true, token, user: req.user._id });
+
+  User.findById(req.user._id).then(
+    (user) => {
+      res.status(200);
+      res.setHeader("Content-Type", "application/json");
+      res.json({ success: true, token, user: user.username });
+    },
+    (err) => next(err)
+  );
 });
 router.get("/logout", (req, res, next) => {
   req.logOut();

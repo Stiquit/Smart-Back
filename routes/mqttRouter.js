@@ -7,16 +7,14 @@ const Routine = require("../models/routine");
 var authenticate = require("../autenthicate");
 var cors = require("./cors");
 
-router
-  .route("/")
-  .post(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    res.status(200);
-    res.setHeader("Content-Type", "application/json");
-    res.json({
-      Status: `Message emmited to ${req.body.topic}`,
-      Reply: "true",
-    });
-    /*
+router.route("/").post(cors.corsWithOptions, (req, res, next) => {
+  res.status(200);
+  res.setHeader("Content-Type", "application/json");
+  res.json({
+    Status: `Message emmited to ${req.body.topic}`,
+    Reply: "true",
+  });
+  /*
     const date = new Date();
     Action.create({
         user: req.user._id,
@@ -31,10 +29,10 @@ router
           Reply: message.toString(),
         });   
       });*/
-  });
+});
 router
   .route("/actions")
-  .get(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+  .get(cors.corsWithOptions, (req, res, next) => {
     Action.find({ user: req.user._id })
       .populate("user", "username")
       .populate("device", "name")
@@ -47,7 +45,7 @@ router
         (err) => next(err)
       );
   })
-  .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
+  .delete(cors.corsWithOptions, (req, res, next) => {
     Action.deleteMany({ user: req.user._id }).then(
       (resp) => {
         res.status(200);
@@ -57,8 +55,6 @@ router
       (err) => next(err)
     );
   });
-router
-  .route("/routines")
-  .get(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {});
+router.route("/routines").get(cors.corsWithOptions, (req, res, next) => {});
 
 module.exports = router;

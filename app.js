@@ -9,7 +9,7 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/userRouter");
 var mqttRouter = require("./routes/mqttRouter");
 var deviceRouter = require("./routes/deviceRouter");
-
+var routineRouter=require("./routes/routineRouter")
 var app = express();
 
 //Set the topic listener for the mqtt server
@@ -30,6 +30,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/mqtt", mqttRouter);
 app.use("/devices", deviceRouter);
+app.use("/routines",routineRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
