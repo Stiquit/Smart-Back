@@ -29,7 +29,10 @@ router.post("/signup", (req, res, next) => {
           passport.authenticate("local")(req, res, () => {
             res.statusCode = 200;
             res.setHeader("Content-Type", "application/json");
-            res.json({ success: true, user: user.username });
+            res.json({
+              success: true,
+              user: { user: user.username, _id: user._id },
+            });
           });
         }
       )
@@ -37,12 +40,15 @@ router.post("/signup", (req, res, next) => {
 });
 router.post("/signin", passport.authenticate("local"), (req, res, next) => {
   var token = authenticate.getToken({ _id: req.user._id });
-
   User.findById(req.user._id).then(
     (user) => {
       res.status(200);
       res.setHeader("Content-Type", "application/json");
-      res.json({ success: true, token, user: user.username });
+      res.json({
+        success: true,
+        token,
+        user: { user: user.username, _id: user._id },
+      });
     },
     (err) => next(err)
   );

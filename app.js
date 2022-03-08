@@ -12,7 +12,6 @@ var deviceRouter = require("./routes/deviceRouter");
 var routineRouter=require("./routes/routineRouter")
 var app = express();
 
-//Set the topic listener for the mqtt server
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
