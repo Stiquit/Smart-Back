@@ -12,8 +12,10 @@ var { Server } = require("socket.io");
 var { io } = require("socket.io-client");
 var http = require("http");
 var mongoose = require("mongoose");
-const aedes = require("aedes")();
-const { createServer } = require("aedes-server-factory");
+const aedesPersistence = require("aedes-persistence");
+const aedes = require("aedes")({
+  persistence: aedesPersistence.persistence,
+});
 
 /**MongoDb server initializaction */
 const connect = mongoose.connect(
@@ -30,6 +32,7 @@ connect.then(
 );
 
 /**HTTP Server initialization */ /**WebSocket Server initialization */ /** MQTT Server initialization */
+
 const mqttServer = require("net").createServer(aedes.handle);
 const mqttPort = 1883;
 
@@ -58,16 +61,15 @@ ioServer.on("connection", (socket) => {
   });
   socket.on("routine", (r) => utils.routineHandler(r.actions, mqttClient));
   socket.on("disconnect", () => socket.removeAllListeners());
-  socket.on("reply", (a) => {
-    ioServer.emit("reply", a);
-  });
+  socket.on("reply", (a) => ioServer.emit("reply", a));
+  socket.on("routineReply", (a) => ioServer.emit("routineReply", a));
 });
 
 mqttClient.on("connect", () => {
-  mqttClient.subscribe("reply");
+  mqttClient.subscribe(["reply", "routineReply"]);
 });
 
-mqttClient.on("message", (topic, payload) => {
+mqttClient.on("message", (topic, payload, packet) => {
   console.log(`MQTT message to ${topic}: ${String(payload)}`);
   ioSocket.emit(topic, String(payload));
 });

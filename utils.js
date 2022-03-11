@@ -8,7 +8,7 @@ const actionsToFunction = {
     console.log(`delay of ${payload} done`);
   },
 };
-const timeHandler = async (payload, mqttClient) => {
+const timeHandler = async (payload) => {
   return new Promise((resolve, reject) => setTimeout(resolve, payload));
 };
 
@@ -19,13 +19,15 @@ const deviceHandler = (topic = "", payload = "", _id = "", mqttClient) => {
 };
 
 const routineHandler = async (actions = [], mqttClient) => {
+  mqttClient.publish("routineReply", "false");
   for (const a of actions) {
     if (a.type === "time") {
-      await timeHandler(a.payload, mqttClient);
+      await timeHandler(a.payload);
     } else {
       deviceHandler(a.topic, a.payload, a.device, mqttClient);
     }
   }
+  mqttClient.publish("routine", "");
 };
 
 exports.deviceHandler = deviceHandler;
