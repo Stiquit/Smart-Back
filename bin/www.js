@@ -9,16 +9,18 @@ var debug = require("debug")("smartst-backend:server");
 var cors = require("../routes/cors");
 var utils = require("../utils");
 var Actions = require("../models/action");
+var express = require("express");
 var { Server } = require("socket.io");
 var { io } = require("socket.io-client");
 var http = require("http");
 var mongoose = require("mongoose");
 const aedesPersistence = require("aedes-persistence");
 const aedes = require("aedes")();
-
+var mqtt = require("mqtt");
+require("dotenv").config();
 /**MongoDb server initializaction */
 const connect = mongoose.connect(
-  //"mongodb+srv://Stiquit:Peluza9709@cluster0.jcld4.mongodb.net/SmartSt?retryWrites=true&w=majority",
+  //process.env.MONGO_CONNECTION_STRING,
   "mongodb://localhost:27017/SmartSt",
   {
     useNewUrlParser: true,
@@ -33,13 +35,11 @@ connect.then(
 /**HTTP Server initialization */ /**WebSocket Server initialization */ /** MQTT Server initialization */
 
 const mqttServer = require("net").createServer(aedes.handle);
-const mqttPort = 1883;
+const mqttPort = process.env.MQTT_PORT || 1883;
 
 /*Aca al mqtt y se reciben los mensajes para la com full duplex */
-var mqtt = require("mqtt");
 
-var appPort = 8888;
-var port = normalizePort(process.env.PORT || appPort);
+var port = process.env.PORT || 8888;
 app.set("port", port);
 var server = http.createServer(app);
 var ioServer = new Server(server, {
@@ -47,7 +47,7 @@ var ioServer = new Server(server, {
     origin: "*",
   },
 });
-var ioSocket = io("http://localhost:8888", {
+var ioSocket = io(process.env.SOCKET_URL, {
   reconnectionDelayMax: 5000,
 });
 
@@ -67,7 +67,7 @@ ioServer.on("connection", (socket) => {
   socket.on("reply", (a) => ioServer.emit("reply", a));
   socket.on("routineReply", (a) => ioServer.emit("routineReply", a));
 });
-var mqttClient = mqtt.connect("mqtt://192.168.0.21:1883");
+var mqttClient = mqtt.connect(process.env.MQTT_URL);
 mqttClient.on("connect", (packet) => {
   mqttClient.subscribe(["reply", "routineReply"]);
 });
@@ -77,6 +77,10 @@ mqttClient.on("message", (topic, payload, packet) => {
   ioSocket.emit(topic, String(payload));
 });
 
+
+app.use(function (req, res, next) {
+  next(createError(404));
+});
 server.listen(port, () => {
   console.log("websocket server listening on port " + port);
 });

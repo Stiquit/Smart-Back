@@ -32,8 +32,11 @@ app.use("/devices", deviceRouter);
 app.use("/routines", routineRouter);
 app.use("/actions", actionRouter);
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
+
+app.use(express.static(path.join(__dirname, "client", "build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "build", "index.html"));
 });
 
 // error handler
