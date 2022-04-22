@@ -1,0 +1,3 @@
+[submodule "Smart-Front"]
+	path = Smart-Front
+	url = https://github.com/Stiquit/Smart-Front
