@@ -6,7 +6,10 @@
     "start": "nodemon ./bin/www",
     "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
   },
-  "engines": {"node": "14.19.1"},
+  "engines": {
+    "node": "14.19.1",
+    "npm": "6.14.16"
+  },
   "dependencies": {
     "aedes": "^0.46.0",
     "aedes-persistence": "^8.1.3",
