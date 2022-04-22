@@ -9,9 +9,9 @@ var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/userRouter");
 var mqttRouter = require("./routes/mqttRouter");
 var deviceRouter = require("./routes/deviceRouter");
-var routineRouter=require("./routes/routineRouter")
+var routineRouter = require("./routes/routineRouter");
+var actionRouter = require("./routes/actionRouter");
 var app = express();
-
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -29,8 +29,8 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/mqtt", mqttRouter);
 app.use("/devices", deviceRouter);
-app.use("/routines",routineRouter)
-
+app.use("/routines", routineRouter);
+app.use("/actions", actionRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

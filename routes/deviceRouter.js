@@ -50,7 +50,7 @@ deviceRouter
 
 deviceRouter.route("/groups").get(cors.corsWithOptions, (req, res, next) => {
   Group.find({}, { user: 0 })
-    .populate("devices", "name")
+    .populate({ path: "devices", select: "name type" })
     .then(
       (g) => {
         res.status(200);

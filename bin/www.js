@@ -8,14 +8,13 @@ var app = require("../app");
 var debug = require("debug")("smartst-backend:server");
 var cors = require("../routes/cors");
 var utils = require("../utils");
+var Actions = require("../models/action");
 var { Server } = require("socket.io");
 var { io } = require("socket.io-client");
 var http = require("http");
 var mongoose = require("mongoose");
 const aedesPersistence = require("aedes-persistence");
-const aedes = require("aedes")({
-  persistence: aedesPersistence.persistence,
-});
+const aedes = require("aedes")();
 
 /**MongoDb server initializaction */
 const connect = mongoose.connect(
@@ -38,7 +37,7 @@ const mqttPort = 1883;
 
 /*Aca al mqtt y se reciben los mensajes para la com full duplex */
 var mqtt = require("mqtt");
-var mqttClient = mqtt.connect("mqtt://localhost:1883");
+
 var appPort = 8888;
 var port = normalizePort(process.env.PORT || appPort);
 app.set("port", port);
@@ -53,19 +52,23 @@ var ioSocket = io("http://localhost:8888", {
 });
 
 mqttServer.listen(mqttPort, () =>
-  console.log(`Started listening at port ${mqttPort}`)
+  console.log(`Mqtt server listening at port ${mqttPort}`)
 );
 ioServer.on("connection", (socket) => {
   socket.on("device", (d) => {
     utils.deviceHandler(d.topic, d.payload, d.device, mqttClient);
+    utils.addOne(Actions, d);
   });
-  socket.on("routine", (r) => utils.routineHandler(r.actions, mqttClient));
+  socket.on("routine", (r) => {
+    utils.routineHandler(r.actions, mqttClient);
+    utils.addOne(Actions, r);
+  });
   socket.on("disconnect", () => socket.removeAllListeners());
   socket.on("reply", (a) => ioServer.emit("reply", a));
   socket.on("routineReply", (a) => ioServer.emit("routineReply", a));
 });
-
-mqttClient.on("connect", () => {
+var mqttClient = mqtt.connect("mqtt://192.168.0.21:1883");
+mqttClient.on("connect", (packet) => {
   mqttClient.subscribe(["reply", "routineReply"]);
 });
 

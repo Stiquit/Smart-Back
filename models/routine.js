@@ -5,6 +5,9 @@ const Routine = new mongoose.Schema({
     ref: "User",
   },
   name: String,
+  day: String,
+  hour: String,
+  minutes: String,
   actions: [
     {
       topic: String,

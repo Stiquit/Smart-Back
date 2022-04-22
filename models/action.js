@@ -7,8 +7,12 @@ const Action = new mongoose.Schema({
   device: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Device",
-    required: true,
   },
+  routine: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Routine",
+  },
+  name: String,
   payload: String,
   day: Number,
   hour: String,

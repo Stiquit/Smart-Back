@@ -1,13 +1,22 @@
 const delay = require("delay");
-var mqtt = require("mqtt");
-const actionsToFunction = {
-  turn: (topic, payload, device) => deviceHandler(topic, payload, device),
-  time: async (payload) => {
-    console.log("Starting delay...");
-    await delay(payload);
-    console.log(`delay of ${payload} done`);
-  },
+const Action = require("./models/action");
+
+//Database utilites
+
+const addOne = async (model, toAdd) => {
+  const now = new Date();
+  toAdd = {
+    ...toAdd,
+    day: now.getDay(),
+    hour: `${now.getHours()}:${now.getMinutes()}`,
+  };
+  await model.create(toAdd);
 };
+const find = async (model, filter) => {
+  await model.find(filter);
+};
+//Server utilities
+
 const timeHandler = async (payload) => {
   return new Promise((resolve, reject) => setTimeout(resolve, payload));
 };
@@ -29,6 +38,7 @@ const routineHandler = async (actions = [], mqttClient) => {
   }
   mqttClient.publish("routine", "");
 };
-
 exports.deviceHandler = deviceHandler;
 exports.routineHandler = routineHandler;
+exports.addOne = addOne;
+exports.find = find;

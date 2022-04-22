@@ -14,21 +14,7 @@ router.route("/").post(cors.corsWithOptions, (req, res, next) => {
     Status: `Message emmited to ${req.body.topic}`,
     Reply: "true",
   });
-  /*
-    const date = new Date();
-    Action.create({
-        user: req.user._id,
-        device: req.body.device,
-        payload: req.body.action,
-        day: date.getDay(),
-        hour: `${date.getHours()}:${date.getMinutes()}`,
-      }).then(() => {
-        res.setHeader("Content-Type", "application/json");
-        res.status(200).json({
-          Status: `Message emmited to ${req.body.topic}`,
-          Reply: message.toString(),
-        });   
-      });*/
+  
 });
 router
   .route("/actions")
